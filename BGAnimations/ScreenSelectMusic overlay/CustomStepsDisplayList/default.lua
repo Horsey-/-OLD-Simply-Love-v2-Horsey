@@ -6,9 +6,9 @@ local t = Def.ActorFrame{
 	
 	InitCommand=function(self)
 		if IsUsingWideScreen() then
-			self:xy(_screen.cx - 173, _screen.cy + 70)
+			self:xy(_screen.cx - 197, _screen.cy + 70)
 		else
-			self:xy(_screen.cx - 163, _screen.cy + 70)
+			self:xy(_screen.cx - 165, _screen.cy + 70)
 		end
 	end,
 	

@@ -6,15 +6,17 @@ for p=1,2 do
 
 	t[#t+1] = Def.ActorFrame{
 		InitCommand=function(self)
-
+			if not IsUsingWideScreen() then
+				self:zoomx(0.95)
+			end
 			if player == PLAYER_1 then
 				self:player(PLAYER_1)
 				self:horizalign(left)
 				self:y(_screen.cy + 43)
 				if IsUsingWideScreen() then
-					self:x(_screen.cx - 359)
+					self:x(_screen.cx - 383)
 				else
-					self:x(_screen.cx - 343)
+					self:x(_screen.cx - 347)
 				end
 			elseif player == PLAYER_2 then
 				self:player(PLAYER_2)
@@ -23,7 +25,7 @@ for p=1,2 do
 				if IsUsingWideScreen() then
 					self:x(_screen.cx - 213)
 				else
-					self:x(_screen.cx - 208)
+					self:x(_screen.cx - 177)
 				end
 			end
 
@@ -46,20 +48,24 @@ for p=1,2 do
 			end
 		end,
 
-		-- colored background quad
-		Def.Quad{
+		-- colored background	
+		LoadActor("stepartistbubble.png")..{
 			InitCommand=function(self)
-				self:zoomto(175, _screen.h/28)
-				self:x(113)
 				if p == 1 then
 					self:diffuse(PlayerColor(PLAYER_1))
+					self:x(125.5)
+					self:y(4)
+					self:rotationx(180)
 				end
 				if p == 2 then
 					self:diffuse(PlayerColor(PLAYER_2))
+					self:x(76.5)
+					self:y(-4)
+					self:rotationy(180)
 				end
 			end,
 			SetCommand=function(self)
-
+				
 				if GAMESTATE:IsHumanPlayer(player) then
 					local currentSteps = GAMESTATE:GetCurrentSteps(player)
 					if currentSteps then
@@ -69,15 +75,38 @@ for p=1,2 do
 				end
 			end
 		},
-
+	
 		--STEPS label
 		LoadFont("_misoreg hires")..{
-			OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, "STEPS")
+			OnCommand=function(self)
+				self:diffuse(0,0,0,1)
+				self:horizalign(left)
+				self:settext("STEPS")
+				if p == 1 then
+					self:x(30)
+					self:y(-2)
+				else 
+					self:x(133)
+					self:y(1)
+				end
+			end
 		},
-
+	
 		--stepartist text
 		LoadFont("_misoreg hires")..{
-			OnCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
+			OnCommand=function(self)
+				self:diffuse(.118,.157,.184,1)
+				self:maxwidth(142)
+				if p == 1 then
+					self:x(75)
+					self:y(-2)
+					self:horizalign(left)
+				else
+					self:x(126.5)
+					self:y(1)
+					self:horizalign(right)
+				end
+			end,
 			SetCommand=function(self)
 				local stepartist
 				local cs = GAMESTATE:GetCurrentSteps(player)

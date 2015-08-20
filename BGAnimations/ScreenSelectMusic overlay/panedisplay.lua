@@ -116,9 +116,9 @@ for pn in ivalues(Players) do
 
 			if pn==params.Player then
 				self:visible(true)
-				self:zoom(0)
-				self:bounceend(0.3)
-				self:zoom(1)
+				self:diffusealpha(0)
+				self:smooth(0.3)
+				self:diffusealpha(1)
 				self:playcommand("Set")
 			end
 		end,

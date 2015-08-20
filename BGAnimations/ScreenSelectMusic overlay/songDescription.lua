@@ -2,9 +2,9 @@ local t = Def.ActorFrame{
 
 	InitCommand=function(self)
 		if IsUsingWideScreen() then
-			self:xy(_screen.cx - 173, _screen.cy - 28)
+			self:xy(_screen.cx - 197, _screen.cy - 28-10)
 		else
-			self:xy(_screen.cx - 163, _screen.cy - 28)
+			self:xy(_screen.cx - 163, _screen.cy - 28-10)
 		end
 	end,
 
@@ -23,9 +23,10 @@ local t = Def.ActorFrame{
 			InitCommand=function(self)
 				self:diffuse(color("#1e282f"))
 				if IsUsingWideScreen() then
-					self:zoomto(320, _screen.h/10)
+					self:zoomto(320, _screen.h/7.2)
 				else
-					self:zoomto(310, _screen.h/10)
+					self:zoomto(310, _screen.h/7.2)
+					self:addx(-2)
 				end
 			end
 		},
@@ -37,13 +38,13 @@ local t = Def.ActorFrame{
 			-- Artist Label
 			LoadFont("_misoreg hires")..{
 				Text="ARTIST",
-				InitCommand=cmd(horizalign, right; y, -12),
+				InitCommand=cmd(horizalign, right; y, 0),
 				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
 			},
 
 			-- Song Artist
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
+				InitCommand=cmd(horizalign,left; xy, 5,0; maxwidth,WideScale(255,260) ),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 
@@ -55,12 +56,39 @@ local t = Def.ActorFrame{
 				end
 			},
 
+			-- Song Folder Label
+			LoadFont("_misoreg hires")..{
+				Text="FOLDER",
+				InitCommand=cmd(horizalign, right; y, -20),
+				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
+			},			
 
+			-- Song Folder
+			LoadFont("_misoreg hires")..{
+				InitCommand=cmd(horizalign,left; xy, 6,-20; maxwidth,WideScale(255,260) ),
+				SetCommand=function( actor )
+					local song = GAMESTATE:GetCurrentSong()
+				    local text = ""
+						if song then
+								--I would like to find a better method to trim up GetSongDir, but this will work for now, because I highly doubt people will name their packs "Songs" or "AdditionalSongs"
+							local fulldir = song:GetSongDir();
+								--removes the "/ " suffix placed by GetSongDir() (will not impact
+							local remove_end = string.sub(fulldir, 0, -2);
+								--removes "/Songs/" prefix, but if a songs folder is called "Songs" you'll get weird formatting
+							local trimmed_dir = string.gsub(remove_end, "/Songs/", "", 1)
+								--removes "/AdditionalSongs/" from the directory string, and will cause formatting weirdness if there is a song folder with that name 
+							local SongDir = string.gsub(trimmed_dir, "/AdditionalSongs/", "", 1)
+							text = SongDir
+						end
+				   actor:settext( text )
+				end
+			},
 
 			-- BPM Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
+				InitCommand=cmd(horizalign, right; NoStroke; y, 20),
 				SetCommand=function(self)
+					local song = GAMESTATE:GetCurrentSong()
 					self:diffuse(0.5,0.5,0.5,1)
 					self:settext("BPM")
 				end
@@ -68,7 +96,7 @@ local t = Def.ActorFrame{
 
 			-- BPM value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, 5; diffuse, color("1,1,1,1")),
+				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
 
 					--defined in ./Scipts/SL-CustomSpeedMods.lua
@@ -84,7 +112,7 @@ local t = Def.ActorFrame{
 
 			-- Song Length Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; y, 8; x, _screen.w/4.5),
+				InitCommand=cmd(horizalign, right; NoStroke; y, 20; x, 200),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 					self:diffuse(0.5,0.5,0.5,1)
@@ -94,7 +122,7 @@ local t = Def.ActorFrame{
 
 			-- Song Length Value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; y, 8; x, _screen.w/4.5 + 5),
+				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, 207),
 				SetCommand=function(self)
 					local duration
 
@@ -139,7 +167,7 @@ local t = Def.ActorFrame{
 			end,
 
 			LoadActor("bubble.png")..{
-				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 30),
+				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 39),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 
@@ -156,7 +184,7 @@ local t = Def.ActorFrame{
 			},
 
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
+				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 43),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 
