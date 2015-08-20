@@ -67,7 +67,7 @@ local t = Def.ActorFrame{
 
 	LoadFont("_wendy small") .. {
 		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText");),
+		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,SCREEN_LEFT+16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText");),
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
 	},
@@ -78,7 +78,22 @@ local t = Def.ActorFrame{
 		TextCommand=cmd(settext, StageText),
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
-	}
+	},
+	
+	LoadFont("_wendy small") .. {
+		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,SCREEN_RIGHT-16; horizalign,right; diffusealpha,0; queuecommand,"TextSet"),
+		TextSetCommand=function(self)
+		--we only want the date to show on the evaluation stage, so we're going to restrict settext to only work on that screen
+			local topscreen = SCREENMAN:GetTopScreen()
+			if topscreen then
+				if topscreen:GetName() == "ScreenEvaluationStage" or topscreen:GetName() == ScreenEvaluationCourse then
+					self:settext( string.format('%s %02i %04i', MonthToString(MonthOfYear()), DayOfMonth(), Year()) )
+				end
+			end
+		end,
+		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
+		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+	},
 }
 
 return t

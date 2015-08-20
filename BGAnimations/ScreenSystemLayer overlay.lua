@@ -68,7 +68,7 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
--- Centered Credit Text
+-- Centered Credit Text, No Event Mode Text
 t[#t+1] = LoadFont("_wendy small")..{
 	InitCommand=cmd(xy, _screen.cx, _screen.h-16; zoom,0.5; horizalign,center ),
 
@@ -101,7 +101,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 		self:visible( bShow )
 
 		if PREFSMAN:GetPreference("EventMode") then
-			self:settext('EVENT MODE')
+			self:settext('')
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
 			local credits = GetCredits()
@@ -122,5 +122,55 @@ t[#t+1] = LoadFont("_wendy small")..{
 		end
 	end
 }
+--Bottom Bar Clock
+t[#t+1] = LoadFont("_misoreg hires")..{
+	InitCommand=cmd(x,_screen.cx;
+					y,SCREEN_BOTTOM-16;
+					zoom,1;horizalign,center;
+	);
+	OnCommand=cmd(playcommand,"Refresh");
+	ScreenChangedMessageCommand=function(self)
+		self:playcommand("Refresh");
+	end;
+	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh");
+	CoinsChangedMessageCommand=cmd(playcommand,"Refresh");
+	PulseMessageCommand=cmd(playcommand,"Refresh");
+	RefreshCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local bShow = true
+		if screen then
+			local sClass = screen:GetName()
+			bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
+
+			-- hide this centered credit text for certain screens,
+			-- where it would more likely just be distracting and superfluous
+			if sClass == "ScreenPlayerOptions"
+				or sClass == "ScreenTitleMenu"
+				or sClass == "ScreenPlayerOptions2"
+				or sClass == "ScreenEvaluationStage"
+				or sClass == "ScreenEvaluationCourse"
+				or sClass == "ScreenEvaluationSummary"
+				or sClass == "ScreenNameEntryActual"
+				or sClass == "ScreenNameEntryTraditional"
+				or sClass == "ScreenGameOver" then
+				bShow = false
+			end
+		end
+
+		self:visible( bShow )
+
+		if PREFSMAN:GetPreference("EventMode") then
+			self:settext(string.format('%2ih %02im %02i %s %02i %04i', Hour(), Minute(), Second(), MonthToString(MonthOfYear()), DayOfMonth(), Year()))
+		end
+	end;
+}
+
+--Pulse by second (used by the clock)
+t[#t+1] = Def.ActorFrame {
+	Def.Quad {
+		PulseCommand=function(self) MESSAGEMAN:Broadcast("Pulse"); self:sleep(1); self:queuecommand("Pulse"); end;
+		InitCommand=cmd(playcommand,"Pulse");
+	};
+};
 
 return t
