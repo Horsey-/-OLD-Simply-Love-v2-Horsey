@@ -54,7 +54,7 @@ local t = Def.ActorFrame{
 
 
 	Def.Quad{
-		InitCommand=cmd(xy,_screen.cx,SCREEN_TOP; zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1")),
+		InitCommand=cmd(xy,_screen.cx,SCREEN_TOP-2;zoomto,_screen.w,37; diffuse,color("0.65,0.65,0.65,1")),
 		OffCommand=function(self)
 			local topscreen = SCREENMAN:GetTopScreen()
 			if topscreen then

@@ -132,6 +132,7 @@ for pn in ivalues(Players) do
 				OnCommand=function(self)
 					if stepartist then
 						self:settext(stepartist)
+						self:maxwidth(170)
 					end
 				end
 			}

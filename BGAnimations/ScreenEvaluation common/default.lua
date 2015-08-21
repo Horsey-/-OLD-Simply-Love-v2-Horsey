@@ -150,6 +150,7 @@ for pn in ivalues(Players) do
 					self:horizalign(right)
 				end
 				self:zoom(0.7)
+				self:maxwidth(170)
 			end,
 			BeginCommand=function(self)
 				local stepartist

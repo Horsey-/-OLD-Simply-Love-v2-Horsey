@@ -1,6 +1,7 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
+--Player Text/Insert Credit/Press Start
 local function CreditsText( pn )
 	local text = LoadFont("_misoreg hires") .. {
 		InitCommand=function(self)
@@ -21,7 +22,9 @@ local function CreditsText( pn )
 			end
 
 			self:visible( bShow );
-		end
+		end;
+		SelectMenuOpenedMessageCommand=cmd(accelerate,0.2;addy,-31);
+		SelectMenuClosedMessageCommand=cmd(linear,0.3;addy,31);
 	};
 	return text;
 end;
@@ -73,6 +76,8 @@ t[#t+1] = LoadFont("_wendy small")..{
 	InitCommand=cmd(xy, _screen.cx, _screen.h-16; zoom,0.5; horizalign,center ),
 
 	OnCommand=cmd(playcommand,"Refresh"),
+	SelectMenuOpenedMessageCommand=cmd(accelerate,0.2;addy,-31),
+	SelectMenuClosedMessageCommand=cmd(linear,0.3;addy,31),
 	ScreenChangedMessageCommand=cmd(playcommand,"Refresh"),
 	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh"),
 	CoinsChangedMessageCommand=cmd(playcommand,"Refresh"),
@@ -129,6 +134,8 @@ t[#t+1] = LoadFont("_misoreg hires")..{
 					zoom,1;horizalign,center;
 	);
 	OnCommand=cmd(playcommand,"Refresh");
+	SelectMenuOpenedMessageCommand=cmd(accelerate,0.2;addy,-31);
+	SelectMenuClosedMessageCommand=cmd(linear,0.3;addy,31);
 	ScreenChangedMessageCommand=function(self)
 		self:playcommand("Refresh");
 	end;
@@ -157,10 +164,15 @@ t[#t+1] = LoadFont("_misoreg hires")..{
 			end
 		end
 
-		self:visible( bShow )
-
-		if PREFSMAN:GetPreference("EventMode") then
+		--don't show the clock in Free Play or Coin mode, because these modes should have the free play/coins banner
+		if GAMESTATE:GetCoinMode() == "CoinMode_Pay" or GAMESTATE:GetCoinMode() == "CoinMode_Free" 
+			then self:visible( false ) 
+		end
+		
+		--as long as you're in event mode, the clock will be visible on the screens where it's not blacklisted
+		if PREFSMAN:GetPreference("EventMode") or GAMESTATE:GetCoinMode() == "CoinMode_Home" then
 			self:settext(string.format('%2ih %02im %02i %s %02i %04i', Hour(), Minute(), Second(), MonthToString(MonthOfYear()), DayOfMonth(), Year()))
+			self:visible( bShow )
 		end
 	end;
 }
@@ -169,7 +181,7 @@ t[#t+1] = LoadFont("_misoreg hires")..{
 t[#t+1] = Def.ActorFrame {
 	Def.Quad {
 		PulseCommand=function(self) MESSAGEMAN:Broadcast("Pulse"); self:sleep(1); self:queuecommand("Pulse"); end;
-		InitCommand=cmd(playcommand,"Pulse");
+		InitCommand=cmd(visible,false;playcommand,"Pulse");
 	};
 };
 

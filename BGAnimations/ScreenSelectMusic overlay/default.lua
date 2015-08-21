@@ -19,8 +19,7 @@ t[#t+1] =  LoadActor("stepArtist.lua")
 t[#t+1] = LoadActor("panedisplay")
 
 -- Select Menu/Bottom Bar
---not enabled yet
---t[#t+1] = LoadActor("bottombar")
+t[#t+1] = LoadActor("bottombar")
 
 -- the fadeout that informs users to press START if they want options
 t[#t+1] = LoadActor("fadeOut")
